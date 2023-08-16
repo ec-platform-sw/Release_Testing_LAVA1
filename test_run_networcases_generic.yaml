@@ -674,6 +674,58 @@ actions:
         failures:
         - message: "FAIL"
           error: "i2c_detect test fail"
+- test:
+    namespace: linux1
+    timeout:
+      minutes: 15
+      skip: true
+    interactive:
+    - name: iperf
+      prompts: ["iperf Done"]
+      script:
+      - command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p  /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf.expect;/root/lava_scripts/iperf_mtu_setup_server.expect 1500;/root/lava_scripts/run_iperf.expect;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf.expect;/root/lava_scripts/iperf_mtu_setup_server.expect 1500
+      #- command: udhcpc; set -x;/root/lava_scripts/kill_iperf.expect;/root/lava_scripts/iperf_mtu_setup_server.expect 1500;/root/lava_scripts/run_iperf.expect;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf.expect;/root/lava_scripts/iperf_mtu_setup_server.expect 1500
+        name: iperf_mtu_1500
+        #successes:
+        #- message: "SUCCESS"
+        #failures:
+        #- message: "FAIL"
+        #  error: "iperf test fail"
+- test:
+    namespace: linux1
+    timeout:
+      minutes: 15
+      skip: true
+    interactive:
+    - name: iperf
+      prompts: ["iperf Done"]
+      script:
+      - command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf.expect;/root/lava_scripts/iperf_mtu_setup_server.expect 2000;/root/lava_scripts/run_iperf.expect;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf.expect;/root/lava_scripts/iperf_mtu_setup_server.expect 1500
+      #- command: udhcpc; set -x; /root/lava_scripts/iperf_mtu_setup_server.expect 2000;/root/lava_scripts/run_iperf.expect;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf.expect;/root/lava_scripts/iperf_mtu_setup_server.expect 1500
+        name: iperf_mtu_2000
+        #successes:
+        #- message: "SUCCESS"
+        #failures:
+        #- message: "FAIL"
+        #  error: "iperf test fail"
+- test:
+    namespace: linux1
+    timeout:
+      minutes: 15
+      skip: true
+    interactive:
+    - name: iperf
+      prompts: ["iperf Done"]
+      script:
+      - command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip;set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf.expect;/root/lava_scripts/iperf_mtu_setup_server.expect 9000;/root/lava_scripts/run_iperf.expect;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf.expect;/root/lava_scripts/iperf_mtu_setup_server.expect 1500
+      #- command: udhcpc; set -x; /root/lava_scripts/kill_iperf.expect;/root/lava_scripts/iperf_mtu_setup_server.expect 9000;/root/lava_scripts/run_iperf.expect;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf.expect;/root/lava_scripts/iperf_mtu_setup_server.expect 1500
+        name: iperf_mtu_9000
+        #successes:
+        #- message: "SUCCESS"
+        #failures:
+        #- message: "FAIL"
+        #  error: "iperf test fail"
+
 
 - test:
     namespace: linux1
@@ -790,6 +842,21 @@ actions:
         # - message: "TIMEOUT"
           # exception: InfrastructureError
           # error: "Dhrystone test failed"
+
+
+- test:
+    namespace: linux1
+    timeout:
+      minutes: 800
+    interactive:
+    - name: parallel_run_tests
+      prompts: ["# "]
+      script:
+      - command: cd /coremark;./coremark_mthread.exe &
+      - command: cd /lmbench-3.0-a9/;cp configs/CONFIG.raptor2 bin/arm-linux/;cd scripts/;export OS=arm-linux;taskset -c 3 ./results &
+      - command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf.expect;/root/lava_scripts/iperf_mtu_setup_server.expect 2000;/root/lava_scripts/run_iperf.expect;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf.expect;/root/lava_scripts/iperf_mtu_setup_server.expect 1500 ; sleep 600;
+      - command: pwd;df -h
+        name: parallel_run_tests
 
 
 
