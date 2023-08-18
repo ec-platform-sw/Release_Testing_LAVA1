@@ -14,3 +14,5 @@ do
    sed -i "s|$KEY|$VALUE|g" ./test_run.yaml
 done
 
+chmod 777 ./test_run.yaml
+
