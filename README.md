@@ -11,7 +11,7 @@ OOB Setup and OOB Run
 Test Execution using LAVA:
 ##########################
 1. Download the Repo using git clone https://github.com/ec-platform-sw/Release_Testing_LAVA.git 
-2. chmod 777 test_run_file_generate.sh
+2. Run #chmod 777 test_run_file_generate.sh
 3. Run the script ./test_run_file_generate.sh by provide the requireed  arguments and it will provide required test_run file/files.
 4.  Example:
    "DEVICE_TYPE="b0-edgeq-raptor2" JOB_NAME="Release Testing" BOARD_TAG="Board211" FIRMWARE_BIN_PATH="/lab-nfs/koti/latestimages/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0/FLASHER/flash_image_16M.bin" TFTP_SERVER_IP_ADDRESS="192.168.9.160" TFTP_PKG_DIR_PATH="koti/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0" MAC_ADDRESS="FC:9B:D4:00:02:3A"
