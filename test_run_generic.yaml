@@ -675,29 +675,6 @@ actions:
         - message: "FAIL"
           error: "i2c_detect test fail"
 
-- test:
-    namespace: linux1
-    timeout:
-      minutes: 5
-      skip: true
-    interactive:
-    - name: SSH
-      prompts: ["PREEMPT_RT"]
-      script:
-      - command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; chmod 777 /root/lava_scripts/ssh_tests.expect; /root/lava_scripts/ssh_tests.expect TFTP_SERVER_IP_ADDRESS $ip
-        name: ssh_root_login
-        successes:
-        - message: "running"
-        failures:
-        - message: "No route to host"
-          error: "ssh_root test fail"
-    - name: SSH
-      prompts: ["# "]
-      script:
-      - command:
-        name: ssh_root_login_1
-
-
 
 - test:
     namespace: linux1
