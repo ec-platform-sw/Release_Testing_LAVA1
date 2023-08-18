@@ -1441,7 +1441,7 @@ actions:
       - command: version;pri ethaddr
         name: FirmwareFlash
         successes:
-        - message: "v1.3.0-RC8.0"
+        - message: "RC7.3"
         failures:
         - message: "TIMEOUT"
 #          exception: InfrastructureError
