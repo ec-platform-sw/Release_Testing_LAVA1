@@ -1,7 +1,5 @@
 #!/bin/sh
 
-#!/bin/sh
-
 cp test_run_generic.yaml test_run.yaml
 for ARGUMENT in "$@"
 do
