@@ -37,4 +37,4 @@ do
    sed -i "s|$KEY|$VALUE|g" /lab-nfs/koti/lava-apc/flash_b0_titan_$board_number.sh
 done
 
-
+sed -i "s|board_number|$board_number|g" /lab-nfs/koti/lava-apc/power_reset_bootns_titan_$board_number.sh
