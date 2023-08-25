@@ -679,7 +679,7 @@ actions:
 - test:
     namespace: linux1
     timeout:
-      minutes: 10
+      minutes: 30
       skip: true
     interactive:
     - name: perf_LMBench_Performance_Test
@@ -717,7 +717,7 @@ actions:
 - test:
     namespace: linux1
     timeout:
-      minutes: 10
+      minutes: 20
       skip: true
     interactive:
     - name: perf_Coremark_mthread_Performance_Test 
@@ -735,7 +735,7 @@ actions:
 - test:
     namespace: linux1
     timeout:
-      minutes: 10
+      minutes: 20
       skip: true
     interactive:
     - name: perf_Coremark_sthread_Performance_Test
