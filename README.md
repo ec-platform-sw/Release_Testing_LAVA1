@@ -14,7 +14,7 @@ Test Execution using LAVA:
 2. Run #chmod 777 test_run_file_generate.sh; chmod 777 test_setup_update.sh
 3. Run #scp test_setup_update.sh equser@192.168.3.198:/home/equser/lava/release_testing
 4. Run the script ./test_run_file_generate.sh by provide the requireed  arguments and it will provide required test_run file/files.
-5.  Example:
+   Example:
    "DEVICE_TYPE="b0-edgeq-raptor2" JOB_NAME="Release Testing" BOARD_TAG="Board211" FIRMWARE_BIN_PATH="/lab-nfs/koti/latestimages/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0/FLASHER/flash_image_16M.bin" TFTP_SERVER_IP_ADDRESS="192.168.9.160" TFTP_PKG_DIR_PATH="koti/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0" MAC_ADDRESS="FC:9B:D4:00:02:3A"
 6. Run the LAVA test using
     1. Loging to 192.168.3.198 (ssh equser@192.168.3.198)
