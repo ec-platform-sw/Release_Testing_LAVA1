@@ -438,7 +438,7 @@ actions:
       - command: ifconfig -a ; ifconfig eth0
         name: MAC_check_linux_level
         successes:
-        - message: "MAC_ADDRESS"
+        - message: "MAC_ADDRESS_VALUE"
         failures:
         - message: "TIMEOUT"
           #exception: InfrastructureError
@@ -464,7 +464,7 @@ actions:
       - command: ifconfig -a ; ifconfig eth0
         name: MAC_check_linux_level
         successes:
-        - message: "MAC_ADDRESS"
+        - message: "MAC_ADDRESS_VALUE"
         failures:
         - message: "TIMEOUT"
           #exception: InfrastructureError
@@ -1150,7 +1150,7 @@ actions:
       - command: ifconfig -a ; ifconfig eth0
         name: MAC_check_linux_level
         successes:
-        - message: "MAC_ADDRESS"
+        - message: "MAC_ADDRESS_VALUE"
         failures:
         - message: "TIMEOUT"
           #exception: InfrastructureError
@@ -1176,7 +1176,7 @@ actions:
       - command: ifconfig -a ; ifconfig eth0
         name: MAC_check_linux_level
         successes:
-        - message: "MAC_ADDRESS"
+        - message: "MAC_ADDRESS_VALUE"
         failures:
         - message: "TIMEOUT"
           #exception: InfrastructureError
