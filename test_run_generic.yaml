@@ -860,43 +860,6 @@ actions:
 # eMMC boot login after flash
 #############################
 
-# - boot:
-    # namespace: linux1
-    # method: minimal
-    # auto_login:
-      # login_prompt: 'login:'
-      # username: rootrootroot
-    # timeout:
-     # minutes: 20
-    # prompts:
-    # - 'Password:'
-    # timeout:
-      # minutes: 20
-
-
-# - test:
-    # namespace: linux1
-    # timeout:
-      # minutes: 10
-    # interactive:
-    # - name: basic_linux_commands_emmcboot
-      # prompts: ["login:"]
-      # script:
-      # - command: root
-# #        name: basic_linux_commands
-
-
-# - test:
-    # namespace: linux1
-    # timeout:
-      # minutes: 10
-    # interactive:
-    # - name: basic_linux_commands_emmcboot
-      # prompts: ["# "]
-      # script:
-      # - command: root
-# #        name: basic_linux_commands
-
 - boot:
     namespace: linux1
     method: minimal
@@ -910,14 +873,13 @@ actions:
     timeout:
       minutes: 20
 
-
 - test:
     namespace: linux1
     timeout:
       minutes: 10
     interactive:
     - name: basic_linux_commands_emmcboot
-      prompts: ["login:"]
+      prompts: ["login:","Password:","# "]
       script:
       - command: root
 #        name: basic_linux_commands
@@ -929,7 +891,18 @@ actions:
       minutes: 10
     interactive:
     - name: basic_linux_commands_emmcboot
-      prompts: ["# "]
+      prompts: ["login:","Password:","# "]
+      script:
+      - command: root
+#        name: basic_linux_commands
+
+- test:
+    namespace: linux1
+    timeout:
+      minutes: 10
+    interactive:
+    - name: basic_linux_commands_emmcboot
+      prompts: ["login:","Password:","# "]
       script:
       - command: root
 #        name: basic_linux_commands
@@ -973,7 +946,7 @@ actions:
     - name: eMMC_Boot1
       prompts: ["Restarting system"]
       script:
-      - command: echo "y" | sh -v emmc_flasher.sh; 
+      - command: echo "y" | sh -v emmc_flasher.sh;
         name: eMMC_Boot
         #successes:
         #- message: "Restarting system"
@@ -1002,17 +975,7 @@ actions:
       minutes: 20
 
 
-#- test:
-#    namespace: linux1
-#    timeout:
-#      minutes: 10
-#    interactive:
-#    - name: basic_linux_commands_emmcboot
-#      prompts: ["Login incorrect"]
-#      echo: discard
-#      script:
-#      - command: root
-##        name: basic_linux_commands
+
 
 - test:
     namespace: linux1
@@ -1027,29 +990,6 @@ actions:
 #        name: basic_linux_commands
 
 
-#- test:
-#    namespace: linux1
-#    timeout:
-#      minutes: 4
-#    interactive:
-#    - name: basic_linux_commands
-#      prompts: ["raptor2 login:","#"]
-#      echo: discard
-#      script:
-#      - command:  root
-##        name: lstest
-##      - command:
-
-#- test:
-#    namespace: linux1
-#    timeout:
-#      minutes: 4
-#    interactive:
-#    - name: basic_linux_commands
-#      prompts: ["raptor2 login:","#"]
-#      echo: discard
-#      script:
-#      - command:  root
 
 - test:
     namespace: linux1
@@ -1058,9 +998,9 @@ actions:
     interactive:
     - name: basic_linux_commands
       prompts: ["# "]
-      echo: discard   
+      echo: discard
       script:
-      #- command: 
+      #- command:
       - command: ls -ltr;pwd; df -h; ls -l /dev | grep -i mmc;reboot
 #        name: lstest
         successes:
@@ -1109,9 +1049,9 @@ actions:
     interactive:
     - name: basic_linux_commands
       prompts: ["# "]
-      echo: discard   
+      echo: discard
       script:
-      #- command: 
+      #- command:
       - command: ls -ltr;pwd; df -h; ls -l /dev | grep -i mmc
 #        name: lstest
         successes:
@@ -1120,6 +1060,7 @@ actions:
         - message: "TIMEOUT"
 #          exception: InfrastructureError
           error: "ls failed"
+
 
 - test:
     namespace: linux1
@@ -1623,7 +1564,7 @@ actions:
       script:
       - command:
       - command: setenv serverip TFTP_SERVER_IP_ADDRESS
-      - command: setenv ipaddr 192.168.6.214
+      - command: setenv ipaddr 192.168.6.214; dhcp
       - command: setenv firmware_addr_f 0
       - command: tftp 0x802000000 TFTP_PKG_DIR_PATH/FLASHER/flash_image_16M.bin
       #- command: tftp 0x802000000 TFTP_PKG_DIR_PATH/flash_image_16M.bin
@@ -1664,14 +1605,13 @@ actions:
     timeout:
       minutes: 20
 
-
 - test:
     namespace: linux1
     timeout:
       minutes: 10
     interactive:
     - name: basic_linux_commands_emmcboot
-      prompts: ["login:"]
+      prompts: ["login:","Password:","# "]
       script:
       - command: root
 #        name: basic_linux_commands
@@ -1683,7 +1623,18 @@ actions:
       minutes: 10
     interactive:
     - name: basic_linux_commands_emmcboot
-      prompts: ["# "]
+      prompts: ["login:","Password:","# "]
+      script:
+      - command: root
+#        name: basic_linux_commands
+
+- test:
+    namespace: linux1
+    timeout:
+      minutes: 10
+    interactive:
+    - name: basic_linux_commands_emmcboot
+      prompts: ["login:","Password:","# "]
       script:
       - command: root
 #        name: basic_linux_commands
@@ -1715,7 +1666,7 @@ actions:
       - command: sleep 5;export PACKAGE_VARIANT_NAME="GNB"
       - command: sleep 5;export FIRMWARE_EVB_VER="V2"
       - command: sleep 5;export ETHERNET_PORT="eth0"
-      - command: sleep 5; export FW_FLASH_REQ="y"
+      - command: sleep 5;export FW_FLASH_REQ="y"
       - command: sleep 5;cd /opt/flasher/
       - command: sed -i "s|tftp -g -r|set -x;time tftp -g -r|g"  /opt/flasher/emmc_flasher.sh
 
@@ -1727,7 +1678,7 @@ actions:
     - name: eMMC_Boot1
       prompts: ["Restarting system"]
       script:
-      - command: echo "y" | sh -v emmc_flasher.sh; 
+      - command: echo "y" | sh -v emmc_flasher.sh;
         name: eMMC_Boot
         #successes:
         #- message: "Restarting system"
@@ -1744,16 +1695,68 @@ actions:
 - boot:
     namespace: linux1
     method: minimal
+    reset: false
     auto_login:
       login_prompt: 'login:'
       username: root
-#      password_prompt: "Password:"
-#      password: "root"
     timeout:
      minutes: 20
     prompts:
     - 'Password:'
-#    - '#'
+    timeout:
+      minutes: 20
+
+
+
+
+- test:
+    namespace: linux1
+    timeout:
+      minutes: 10
+    interactive:
+    - name: basic_linux_commands_emmcboot
+      prompts: ["Password:","raptor2 login:","#"]
+      echo: discard
+      script:
+      - command: root
+#        name: basic_linux_commands
+
+
+
+- test:
+    namespace: linux1
+    timeout:
+      minutes: 4
+    interactive:
+    - name: basic_linux_commands
+      prompts: ["# "]
+      echo: discard
+      script:
+      #- command:
+      - command: ls -ltr;pwd; df -h; ls -l /dev | grep -i mmc;reboot
+#        name: lstest
+        successes:
+        - message: "total"
+        failures:
+        - message: "TIMEOUT"
+#          exception: InfrastructureError
+          error: "ls failed"
+
+
+##
+#linux boot
+##
+- boot:
+    namespace: linux1
+    method: minimal
+    reset: false
+    auto_login:
+      login_prompt: 'login:'
+      username: root
+    timeout:
+     minutes: 20
+    prompts:
+    - 'Password:'
     timeout:
       minutes: 20
 
@@ -1778,9 +1781,9 @@ actions:
     interactive:
     - name: basic_linux_commands
       prompts: ["# "]
-      echo: discard   
+      echo: discard
       script:
-      #- command: 
+      #- command:
       - command: ls -ltr;pwd; df -h; ls -l /dev | grep -i mmc
 #        name: lstest
         successes:
@@ -1789,6 +1792,3 @@ actions:
         - message: "TIMEOUT"
 #          exception: InfrastructureError
           error: "ls failed"
-
-
-
