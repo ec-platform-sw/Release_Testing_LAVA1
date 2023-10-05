@@ -10,6 +10,7 @@ do
    
    echo "$KEY"="$VALUE"
    sed -i "s|$KEY|$VALUE|g" ./test_run.yaml
+   export $KEY=$VALUE
 done
 MACADDRESS_VALUE=${MAC_ADDRESS}
 MACADDRESS_VALUE=$(echo $MACADDRESS_VALUE | tr '[:lower:]' '[:upper:]')
