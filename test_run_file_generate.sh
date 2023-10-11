@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 cp test_run_generic.yaml test_run.yaml
 for ARGUMENT in "$@"
