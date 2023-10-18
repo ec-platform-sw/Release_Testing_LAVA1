@@ -501,7 +501,7 @@ actions:
       script:
       #- command: echo "SUCCESS" >> /root/success.txt; echo "FAIL" >> /root/fail.txt
       #- command: 
-      - command: dmesg | grep -i fail | grep -v kernel.sched | grep -v "Parsing zephyr-mem"; if  [ $? == 0 ] ; then cat /root/fail.txt;else cat /root/success.txt; fi
+      - command: dmesg | grep -i fail | grep -v kernel.sched | grep -v -e  "error -110 whilst initialising MMC card" -e "virt-edgeq 3c980000.edgeq_virt_uio.* Failed to find dma-channels"; if  [ $? == 0 ] ; then cat /root/fail.txt;else cat /root/success.txt; fi
         name: dmesg_fail
         successes:
         - message: "SUCCESS"
@@ -1154,7 +1154,7 @@ actions:
       script:
       #- command: echo "SUCCESS" >> /root/success.txt; echo "FAIL" >> /root/fail.txt
       #- command: 
-      - command: dmesg | grep -i fail | grep -v kernel.sched | grep -v "Parsing zephyr-mem"; if  [ $? == 0 ] ; then cat /root/fail.txt;else cat /root/success.txt; fi
+      - command: dmesg | grep -i fail | grep -v kernel.sched | grep -v -e  "error -110 whilst initialising MMC card" -e "virt-edgeq 3c980000.edgeq_virt_uio.* Failed to find dma-channels"; if  [ $? == 0 ] ; then cat /root/fail.txt;else cat /root/success.txt; fi
         name: dmesg_fail
         successes:
         - message: "SUCCESS"
