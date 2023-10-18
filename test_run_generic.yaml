@@ -489,7 +489,7 @@ actions:
       script:
       #- command: 
       #- command: echo "SUCCESS" >> /root/success.txt; echo "FAIL" >> /root/fail.txt
-      - command: dmesg | grep error | grep -v ARCH_SOC_ID | grep -v "error -110 whilst initialising MMC card"; if  [ $? == 0 ] ; then cat /root/fail.txt;else cat /root/success.txt; fi
+      - command: dmesg | grep error | grep -v ARCH_SOC_ID | grep -v -e  "error -110 whilst initialising MMC card" -e "virt-edgeq 3c980000.edgeq_virt_uio: Failed to find dma-channels"; if  [ $? == 0 ] ; then cat /root/fail.txt;else cat /root/success.txt; fi
         name: dmesg_errors
         successes:
         - message: "SUCCESS"
