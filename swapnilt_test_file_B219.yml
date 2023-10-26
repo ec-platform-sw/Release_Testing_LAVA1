@@ -188,7 +188,7 @@ done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
      prompts: ["# "]
      echo: discard   
      script:
-     - command:coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_cu | grep -v grep | awk '{print $2}');sudo kill -11 $pid;for pid in $pid
+     - command: coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_cu | grep -v grep | awk '{print $2}');sudo kill -11 $pid;for pid in $pid
 do
     core_dump_file="core.$pid"
 
@@ -237,7 +237,7 @@ done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
      prompts: ["# "]
      echo: discard   
      script:
-     - command:coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_cu | grep -v grep | awk '{print $2}');sudo kill -7 $pid;for pid in $pid
+     - command: coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_cu | grep -v grep | awk '{print $2}');sudo kill -7 $pid;for pid in $pid
 do
     core_dump_file="core.$pid"
 
@@ -250,3 +250,85 @@ done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
        failures:
        - message: "TIMEOUT"
          error: "uname failed"
+
+
+- test:
+   namespace: linux1
+   timeout:
+     minutes: 5
+   interactive:
+   - name: time_sync_regression
+     prompts: ["# "]
+     echo: discard   
+     script:
+     - command: python timesync_testing.py --board HAWK --ptp_wait 5 --acc_wait_start 10 --acc_wait_interval 1 --acc_wait_total 60 --v 
+       successes:
+        - expect:
+            - dmesg:
+              contains:
+              - "PTP timestamp test result: SUCCESS"
+        - expect:
+            - dmesg:
+              contains:
+              - "SPI interface test result: SUCCESS"
+         - expect:
+            - dmesg:
+              contains:
+              - "DPLL input status test result: SUCCESS" 
+        - expect:
+            - dmesg:
+              contains:
+              - "Timing register configuration test result: SUCCESS"
+         - expect:
+            - dmesg:
+              contains:
+              - "AccuTime test result: SUCCESS"
+        - expect:
+            - dmesg:
+              contains:
+              - "Finished timesync_testing.py!"         
+       failures:
+       - expect:
+          - dmesg:
+              contains:
+              - "PTP timestamp test result: FAILED"
+       - expect:
+            - dmesg:
+              contains:
+              - "SPI interface test result: FAILED"
+         - expect:
+            - dmesg:
+              contains:
+              - "DPLL input status test result: FAILED" 
+        - expect:
+            - dmesg:
+              contains:
+              - "Timing register configuration test result: FAILED"
+         - expect:
+            - dmesg:
+              contains:
+              - "AccuTime test result: FAILED"
+
+#Need to run this performance test weekly
+- test:
+   namespace: linux1
+   timeout:
+     minutes: 5
+   interactive:
+   - name: time_sync_perf
+     prompts: ["# "]
+     echo: discard   
+     script:
+     - command: python accutime_perf_test.py --start 10 --interval 0.5 --total 120 --rest
+art_timesync True --v
+     - command: cat /etc/accutime_perf_test.csv  
+        successes:
+        - expect:
+            - dmesg:
+              contains:
+              - "AccuTime performance test SUCCESS"
+       failures:
+        - expect:
+            - dmesg:
+              contains:
+              - "AccuTime performance test FAILED"
