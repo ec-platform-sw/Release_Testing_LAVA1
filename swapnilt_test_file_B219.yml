@@ -106,229 +106,255 @@ actions:
          error: "uname failed"
  
 
- - test:
-   namespace: linux1
-   timeout:
-     minutes: 4
-   interactive:
-   - name: coredump_du_gcore_test
-     prompts: ["# "]
-     echo: discard   
-     script:
-     - command: coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_du | grep -v grep | awk '{print $2}');gcore $pid;for pid in $pid
-do
-    core_dump_file="core.$pid"
+#  - test:
+#    namespace: linux1
+#    timeout:
+#      minutes: 4
+#    interactive:
+#    - name: coredump_du_gcore_test
+#      prompts: ["# "]
+#      echo: discard   
+#      script:
+#      - command: coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_du | grep -v grep | awk '{print $2}');gcore $pid;for pid in $pid
+# do
+#     core_dump_file="core.$pid"
 
-    if [ -e "$core_dump_file" ]; then
-        echo "Core dump file for PID $pid exists: $core_dump_file"
-    else
-        echo "Core dump file for PID $pid does not exist."
-    fi
-done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
-       failures:
-       - message: "TIMEOUT"
-         error: "uname failed"
-
-
-
- - test:
-   namespace: linux1
-   timeout:
-     minutes: 4
-   interactive:
-   - name: coredump_cu_gcore_test
-     prompts: ["# "]
-     echo: discard   
-     script:
-     - command:coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_cu | grep -v grep | awk '{print $2}');gcore $pid;for pid in $pid
-do
-    core_dump_file="core.$pid"
-
-    if [ -e "$core_dump_file" ]; then
-        echo "Core dump file for PID $pid exists: $core_dump_file"
-    else
-        echo "Core dump file for PID $pid does not exist."
-    fi
-done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
-       failures:
-       - message: "TIMEOUT"
-         error: "uname failed"
-
- - test:
-   namespace: linux1
-   timeout:
-     minutes: 4
-   interactive:
-   - name: coredump_du_kill11_test
-     prompts: ["# "]
-     echo: discard   
-     script:
-     - command: coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_du | grep -v grep | awk '{print $2}');sudo kill -11 $pid;for pid in $pid
-do
-    core_dump_file="core.$pid"
-
-    if [ -e "$core_dump_file" ]; then
-        echo "Core dump file for PID $pid exists: $core_dump_file"
-    else
-        echo "Core dump file for PID $pid does not exist."
-    fi
-done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
-       failures:
-       - message: "TIMEOUT"
-         error: "uname failed"
+#     if [ -e "$core_dump_file" ]; then
+#         echo "Core dump file for PID $pid exists: $core_dump_file"
+#     else
+#         echo "Core dump file for PID $pid does not exist."
+#     fi
+# done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
+#        failures:
+#        - message: "TIMEOUT"
+#          error: "uname failed"
 
 
 
- - test:
-   namespace: linux1
-   timeout:
-     minutes: 4
-   interactive:
-   - name: coredump_cu_kill11_test
-     prompts: ["# "]
-     echo: discard   
-     script:
-     - command: coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_cu | grep -v grep | awk '{print $2}');sudo kill -11 $pid;for pid in $pid
-do
-    core_dump_file="core.$pid"
+#  - test:
+#    namespace: linux1
+#    timeout:
+#      minutes: 4
+#    interactive:
+#    - name: coredump_cu_gcore_test
+#      prompts: ["# "]
+#      echo: discard   
+#      script:
+#      - command:coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_cu | grep -v grep | awk '{print $2}');gcore $pid;for pid in $pid
+# do
+#     core_dump_file="core.$pid"
 
-    if [ -e "$core_dump_file" ]; then
-        echo "Core dump file for PID $pid exists: $core_dump_file"
-    else
-        echo "Core dump file for PID $pid does not exist."
-    fi
-done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
-       failures:
-       - message: "TIMEOUT"
-         error: "uname failed"
+#     if [ -e "$core_dump_file" ]; then
+#         echo "Core dump file for PID $pid exists: $core_dump_file"
+#     else
+#         echo "Core dump file for PID $pid does not exist."
+#     fi
+# done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
+#        failures:
+#        - message: "TIMEOUT"
+#          error: "uname failed"
 
+#  - test:
+#    namespace: linux1
+#    timeout:
+#      minutes: 4
+#    interactive:
+#    - name: coredump_du_kill11_test
+#      prompts: ["# "]
+#      echo: discard   
+#      script:
+#      - command: coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_du | grep -v grep | awk '{print $2}');sudo kill -11 $pid;for pid in $pid
+# do
+#     core_dump_file="core.$pid"
 
- - test:
-   namespace: linux1
-   timeout:
-     minutes: 4
-   interactive:
-   - name: coredump_du_kill7_test
-     prompts: ["# "]
-     echo: discard   
-     script:
-     - command: coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_du | grep -v grep | awk '{print $2}');sudo kill -7 $pid;for pid in $pid
-do
-    core_dump_file="core.$pid"
-
-    if [ -e "$core_dump_file" ]; then
-        echo "Core dump file for PID $pid exists: $core_dump_file"
-    else
-        echo "Core dump file for PID $pid does not exist."
-    fi
-done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
-       failures:
-       - message: "TIMEOUT"
-         error: "uname failed"
-
+#     if [ -e "$core_dump_file" ]; then
+#         echo "Core dump file for PID $pid exists: $core_dump_file"
+#     else
+#         echo "Core dump file for PID $pid does not exist."
+#     fi
+# done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
+#        failures:
+#        - message: "TIMEOUT"
+#          error: "uname failed"
 
 
- - test:
-   namespace: linux1
-   timeout:
-     minutes: 4
-   interactive:
-   - name: coredump_cu_kill7_test
-     prompts: ["# "]
-     echo: discard   
-     script:
-     - command: coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_cu | grep -v grep | awk '{print $2}');sudo kill -7 $pid;for pid in $pid
-do
-    core_dump_file="core.$pid"
 
-    if [ -e "$core_dump_file" ]; then
-        echo "Core dump file for PID $pid exists: $core_dump_file"
-    else
-        echo "Core dump file for PID $pid does not exist."
-    fi
-done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
-       failures:
-       - message: "TIMEOUT"
-         error: "uname failed"
+#  - test:
+#    namespace: linux1
+#    timeout:
+#      minutes: 4
+#    interactive:
+#    - name: coredump_cu_kill11_test
+#      prompts: ["# "]
+#      echo: discard   
+#      script:
+#      - command: coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_cu | grep -v grep | awk '{print $2}');sudo kill -11 $pid;for pid in $pid
+# do
+#     core_dump_file="core.$pid"
+
+#     if [ -e "$core_dump_file" ]; then
+#         echo "Core dump file for PID $pid exists: $core_dump_file"
+#     else
+#         echo "Core dump file for PID $pid does not exist."
+#     fi
+# done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
+#        failures:
+#        - message: "TIMEOUT"
+#          error: "uname failed"
+
+
+#  - test:
+#    namespace: linux1
+#    timeout:
+#      minutes: 4
+#    interactive:
+#    - name: coredump_du_kill7_test
+#      prompts: ["# "]
+#      echo: discard   
+#      script:
+#      - command: coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_du | grep -v grep | awk '{print $2}');sudo kill -7 $pid;for pid in $pid
+# do
+#     core_dump_file="core.$pid"
+
+#     if [ -e "$core_dump_file" ]; then
+#         echo "Core dump file for PID $pid exists: $core_dump_file"
+#     else
+#         echo "Core dump file for PID $pid does not exist."
+#     fi
+# done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
+#        failures:
+#        - message: "TIMEOUT"
+#          error: "uname failed"
+
+
+
+#  - test:
+#    namespace: linux1
+#    timeout:
+#      minutes: 4
+#    interactive:
+#    - name: coredump_cu_kill7_test
+#      prompts: ["# "]
+#      echo: discard   
+#      script:
+#      - command: coredump_folder="/coredump/";pid=$(ps -ef | grep gnb_cu | grep -v grep | awk '{print $2}');sudo kill -7 $pid;for pid in $pid
+# do
+#     core_dump_file="core.$pid"
+
+#     if [ -e "$core_dump_file" ]; then
+#         echo "Core dump file for PID $pid exists: $core_dump_file"
+#     else
+#         echo "Core dump file for PID $pid does not exist."
+#     fi
+# done; gdb /cu/bin/gnb_cu /coredump/core.$pid; bt;info threads;
+#        failures:
+#        - message: "TIMEOUT"
+#          error: "uname failed"
 
 
 - test:
-   namespace: linux1
-   timeout:
-     minutes: 5
-   interactive:
-   - name: time_sync_regression
-     prompts: ["# "]
-     echo: discard   
-     script:
-     - command: python timesync_testing.py --board HAWK --ptp_wait 5 --acc_wait_start 10 --acc_wait_interval 1 --acc_wait_total 60 --v 
-       successes:
-        - expect:
-            - dmesg:
-              contains:
-              - "PTP timestamp test result: SUCCESS"
-        - expect:
-            - dmesg:
-              contains:
-              - "SPI interface test result: SUCCESS"
-         - expect:
-            - dmesg:
-              contains:
-              - "DPLL input status test result: SUCCESS" 
-        - expect:
-            - dmesg:
-              contains:
-              - "Timing register configuration test result: SUCCESS"
-         - expect:
-            - dmesg:
-              contains:
-              - "AccuTime test result: SUCCESS"
-        - expect:
-            - dmesg:
-              contains:
-              - "Finished timesync_testing.py!"         
-       failures:
-       - expect:
-          - dmesg:
-              contains:
-              - "PTP timestamp test result: FAILED"
-       - expect:
-            - dmesg:
-              contains:
-              - "SPI interface test result: FAILED"
-         - expect:
-            - dmesg:
-              contains:
-              - "DPLL input status test result: FAILED" 
-        - expect:
-            - dmesg:
-              contains:
-              - "Timing register configuration test result: FAILED"
-         - expect:
-            - dmesg:
-              contains:
-              - "AccuTime test result: FAILED"
+      namespace: linux1
+      timeout:
+        minutes: 5
+      interactive:
+        - name: test_ptp_timestamp
+          prompts:
+            - "# "
+          echo: discard
+          script:
+            - command: python /bin/timesync_testing.py  --t test_ptp_timestamp --board HAWK --ptp_wait 5 --acc_wait_start
+                10 --acc_wait_interval 1 --acc_wait_total 60 --v
+              successes:
+              - message: "PTP timestamp test result: SUCCESS"
+              failures:
+              - message: "PTP timestamp test result: FAILED"
 
-#Need to run this performance test weekly
+
 - test:
-   namespace: linux1
-   timeout:
-     minutes: 5
-   interactive:
-   - name: time_sync_perf
-     prompts: ["# "]
-     echo: discard   
-     script:
-     - command: python accutime_perf_test.py --start 10 --interval 0.5 --total 120 --rest
-art_timesync True --v
-     - command: cat /etc/accutime_perf_test.csv  
-        successes:
-        - expect:
-            - dmesg:
-              contains:
-              - "AccuTime performance test SUCCESS"
-       failures:
-        - expect:
-            - dmesg:
-              contains:
-              - "AccuTime performance test FAILED"
+      namespace: linux1
+      timeout:
+        minutes: 5
+      interactive:
+        - name: test_spi_interface
+          prompts:
+            - "# "
+          echo: discard
+          script:
+            - command: python /bin/timesync_testing.py --t test_spi_interface --board HAWK --ptp_wait 5 --acc_wait_start
+                10 --acc_wait_interval 1 --acc_wait_total 60 --v
+              successes:
+              - message: "SPI interface test result: SUCCESS"
+              failures:
+              - message: "SPI interface test result: FAILED"
+
+
+- test:
+      namespace: linux1
+      timeout:
+        minutes: 5
+      interactive:
+        - name: test_dpll_input_status
+          prompts:
+            - "# "
+          echo: discard
+          script:
+            - command: python /bin/timesync_testing.py --t test_dpll_input_status --board HAWK --ptp_wait 5 --acc_wait_start
+                10 --acc_wait_interval 1 --acc_wait_total 60 --v
+              successes:
+              - message: "DPLL input status test result: SUCCESS"
+              failures:
+              - message: "DPLL input status test result: FAILED"                        
+
+
+- test:
+      namespace: linux1
+      timeout:
+        minutes: 5
+      interactive:
+        - name: test_timing_reg_conf
+          prompts:
+            - "# "
+          echo: discard
+          script:
+            - command: python /bin/timesync_testing.py --t test_timing_reg_conf --board HAWK --ptp_wait 5 --acc_wait_start
+                10 --acc_wait_interval 1 --acc_wait_total 60 --v
+              successes:
+              - message: "Timing register configuration test result: SUCCESS"
+              failures:
+              - message: "Timing register configuration test result: FAILED"
+
+
+- test:
+      namespace: linux1
+      timeout:
+        minutes: 5
+      interactive:
+        - name: test_accutime
+          prompts:
+            - "# "
+          echo: discard
+          script:
+            - command: python /bin/timesync_testing.py --t test_accutime --board HAWK --ptp_wait 5 --acc_wait_start
+                10 --acc_wait_interval 1 --acc_wait_total 60 --v
+              successes:
+              - message: "AccuTime test result: SUCCESS"
+              failures:
+              - message: "AccuTime test result: FAILED"
+
+
+- test:
+      namespace: linux1
+      timeout:
+        minutes: 5
+      interactive:
+        - name: time_sync_perf
+          prompts:
+            - "# "
+          echo: discard
+          script:
+            - command: python /bin/accutime_perf_test.py --start 10 --interval 0.5 --total 120
+                --rest art_timesync True --v; cat /etc/accutime_perf_test.csv
+              successes:
+                - message: "AccuTime performance test SUCCESS"
+              failures:
+                - message: "AccuTime performance test FAILED"
