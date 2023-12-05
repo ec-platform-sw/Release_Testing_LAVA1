@@ -5,8 +5,7 @@ OOB Setup and OOB Run
 #####################
 1. Please get the OOB Release Testing PC from IT Team with required OS Distro.
 2. Download and setup the Build folder environemtn as per UserGUide.
-3. Boot the target.
-4. Run "udhcpc" command . (Make sure it get the MAC address).
+
 
 Test Execution using LAVA:
 ##########################
