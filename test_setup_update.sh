@@ -1,8 +1,5 @@
 #!/bin/sh
 
-#exit 1
-set -x
-
 for ARGUMENT in "$@"
 do
    KEY=$(echo $ARGUMENT | cut -f1 -d=)
