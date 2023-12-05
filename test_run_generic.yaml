@@ -13,12 +13,6 @@ notify:
     - to:
         method: email
         user: admin
-#    - to:
-#        method: email
-#        email: onkar.kadam@edgeq.io
-#    - to:
-#        method: email
-#        email: feng.kan@edgeq.io
     criteria:
       status: finished
     verbosity: verbose
