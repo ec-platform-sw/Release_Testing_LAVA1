@@ -22,7 +22,7 @@ Test Execution using LAVA:
     1. sudo mkdir -p /lava
     2. sudo chmod 777 -R /lava
     3. sudo mount 192.168.5.221:/mnt/blr/regression  /lava
-7.Make sure Target's Tools folder is extracted in BSP's Product path. if not, Please extract the same using below steps
+7. Make sure Target's Tools folder is extracted in BSP's Product path. if not, Please extract the same using below steps
     1. cd <BSP_PATH>/<PRODUCT PATH> (Ex: # cd /lab-nfs/koti/latestimages/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0)
     2. cd TOOLS
     3. tar -xzvf <Board.tar.gz> ( Ex: #tar -xzvf TITAN.tar.gz or #tar -xzvf HAWK.tar.gz etc...)
