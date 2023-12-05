@@ -26,8 +26,6 @@ Test Execution using LAVA:
     1. cd <BSP_PATH>/<PRODUCT_PATH> (Ex: # cd /lab-nfs/koti/latestimages/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0)
     2. cd TOOLS
     3. tar -xzvf <Board.tar.gz> ( Ex: #tar -xzvf TITAN.tar.gz or #tar -xzvf HAWK.tar.gz etc...)
-    4. cd <BSP_PATH>/<PRODUCT_PATH>
-    5. cp <BSP_PATH>/<PRODUCT_PATH>/flash_image_16M.bin
 8. Setup on TFTP server
     1. Login to tftp server
     2. cd <BSP_PATH>/<PRODUCT_PATH> (Ex: # cd /srv/tftp/koti/latestimages/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0)
