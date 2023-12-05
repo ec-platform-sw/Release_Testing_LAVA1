@@ -1,7 +1,8 @@
 device_type: DEVICE_TYPE
 
 
-job_name: "  JOB_NAME "
+job_name: " JOB_NAME  @BOARD_TAG  "
+
 
 tags:
 - BOARD_TAG
@@ -12,6 +13,12 @@ notify:
     - to:
         method: email
         user: admin
+#    - to:
+#        method: email
+#        email: onkar.kadam@edgeq.io
+#    - to:
+#        method: email
+#        email: feng.kan@edgeq.io
     criteria:
       status: finished
     verbosity: verbose
@@ -44,8 +51,7 @@ actions:
     to: flasher
     images:
       image:
-       # url: file:/lab-nfs/koti/latestimages/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v11-BN_175/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0/IMAGES/FIRMWARE/EVB-V2/firmware.bin
-        #url: file:/lab-nfs/koti/latestimages/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v11-BN_175/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0/FLASHER/flash_image_16M.bin
+       # url: file:/lava/edgeq/latestimages/RAPTOR2-GNB-PLFM-B0-raptor2_dev_B0_170823_57/PRODUCT-REL-TITAN-GNB-PLFM-B0-raptor2_dev_B0_170823_57/IMAGES/FIRMWARE/EVB-V2/firmware.bin
         url: file:FIRMWARE_BIN_PATH
 
 
@@ -177,7 +183,7 @@ actions:
     - name: eMMC_Boot1
       prompts: ["Restarting system"]
       script:
-      - command: echo "y" | sh -v emmc_flasher.sh; 
+      - command: echo "y" | sh -v emmc_flasher.sh;
         name: eMMC_Boot
         #successes:
         #- message: "Restarting system"
@@ -262,9 +268,9 @@ actions:
    interactive:
    - name: basic_linux_commands
      prompts: ["# "]
-     echo: discard   
+     echo: discard
      script:
-#     - command: 
+#     - command:
      - command: ls -ltr;pwd; df -h; ls -l /dev | grep -i mmc;reboot
 #        name: lstest
        successes:
@@ -395,9 +401,9 @@ actions:
     interactive:
     - name: basic_linux_commands
       prompts: ["# "]
-      echo: discard   
+      echo: discard
       script:
-      #- command: 
+      #- command:
       - command: ls -ltr;pwd; df -h; ls -l /dev | grep -i mmc
 #        name: lstest
         successes:
@@ -420,6 +426,9 @@ actions:
       script:
       #- command:
       #- command:
+      - command: rm -rf ~/.bashrc*;echo "PS1=\"name_TEST> \"" >> ~/.bashrc; cp ~/.bashrc ~/.bashrc_default
+      - command: rm -rf /root/name.sh; echo "#!/bin/sh" >> /root/name.sh ; echo "name=\$1" >> /root/name.sh; echo "name=\$1" >> /root/name.sh; chmod 777 /root/name.sh
+      - command: echo "sed -i \"s|name|\$name|g\" /root/.bashrc" >> /root/name.sh
       - command: rm -rf /root/success.txt; rm -rf /root/fail.txt
       #- command:
       - command: ls -ltr;pwd
@@ -430,11 +439,14 @@ actions:
         - message: "TIMEOUT"
           exception: InfrastructureError
           error: "ls failed"
+      - command: rm -rf /root/lava_scripts;set -x; expect -c 'set timeout 120; spawn /bin/scp -r -o UserKnownHostsFile=/dev/null  -o StrictHostKeyChecking=no equser@192.168.9.160:/lava/edgeq/lava_scripts /root; expect  "password"; send  "Password\$2021\r"; expect   "#" ; sleep 10'
+      - command: sync
+      - command: ls -ltr /root/lava_scripts;sync
     - name: MAC_check_linux_level
       prompts: ["# "]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - command: ifconfig -a ; ifconfig eth0
         name: MAC_check_linux_level
         successes:
@@ -447,7 +459,7 @@ actions:
       prompts: ["# "]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - command: ls / | grep "logdump"
         name: logdump_folder_check
         successes:
@@ -460,7 +472,7 @@ actions:
       prompts: ["# "]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - command: ifconfig -a ; ifconfig eth0
         name: MAC_check_linux_level
         successes:
@@ -473,11 +485,11 @@ actions:
       prompts: ["# "]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - command: echo "SUCCESS" >> /root/success.txt; echo "FAIL" >> /root/fail.txt
-      #- command: 
-      #- command: 
-      - command: udhcpc ;ping TFTP_SERVER_IP_ADDRESS -c 10 >> /tmp/ping_test.txt ; cat /tmp/ping_test.txt | grep "10 packets transmitted, 10 packets received, 0% packet loss" ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
+      #- command:
+      #- command:
+      - command: ping 192.168.9.160 -c 10 >> /tmp/ping_test.txt ; cat /tmp/ping_test.txt | grep "10 packets transmitted, 10 received, 0% packet loss" ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: Flash_Boot_eth_ping_test
         successes:
         - message: "SUCCESS"
@@ -487,7 +499,7 @@ actions:
     - name: Flash_Boot_dmesg_errors
       prompts: ["# "]
       script:
-      #- command: 
+      #- command:
       #- command: echo "SUCCESS" >> /root/success.txt; echo "FAIL" >> /root/fail.txt
       - command: dmesg | grep error | grep -v ARCH_SOC_ID | grep -v -e  "error -110 whilst initialising MMC card" -e "virt-edgeq 3c980000.edgeq_virt_uio.* Failed to find dma-channels"; if  [ $? == 0 ] ; then cat /root/fail.txt;else cat /root/success.txt; fi
         name: dmesg_errors
@@ -500,8 +512,8 @@ actions:
       prompts: ["# "]
       script:
       #- command: echo "SUCCESS" >> /root/success.txt; echo "FAIL" >> /root/fail.txt
-      #- command: 
-      - command: dmesg | grep -i fail | grep -v kernel.sched | grep -v -e  "error -110 whilst initialising MMC card" -e "virt-edgeq 3c980000.edgeq_virt_uio.* Failed to find dma-channels"; if  [ $? == 0 ] ; then cat /root/fail.txt;else cat /root/success.txt; fi
+      #- command:
+      - command: dmesg | grep -i fail | grep -v kernel.sched | grep -v -e "Parsing zephyr-mem" -e "virt-edgeq 3c980000.edgeq_virt_uio.* Failed to find dma-channels"; if  [ $? == 0 ] ; then cat /root/fail.txt;else cat /root/success.txt; fi
         name: dmesg_fail
         successes:
         - message: "SUCCESS"
@@ -524,7 +536,7 @@ actions:
       prompts: ["# "]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - command: echo 1024 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages; dpdk-helloworld -l 0-3 -n 4 | grep -c 'hello from core 1\|hello from core 2\|hello from core 3\|hello from core 0' | grep '[4]'; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: dpdk_helloworld_linux
         successes:
@@ -536,7 +548,7 @@ actions:
       prompts: ["# "]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - command: cat /sys/class/uio/uio17/name | grep DDRGNBNGPCU ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: uio17_info_name
         successes:
@@ -544,7 +556,7 @@ actions:
         failures:
         - message: "FAIL"
           error: "uio17 info test fail"
-      #- command: 
+      #- command:
       - command: cat /sys/class/uio/uio17/maps/map0/addr | grep 0000000900000000 ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: uio17_info_map_address
         successes:
@@ -552,7 +564,7 @@ actions:
         failures:
         - message: "FAIL"
           error: "uio17 info test fail"
-      #- command: 
+      #- command:
       - command: cat /sys/class/uio/uio17/maps/map0/size | grep 0000000040000000 ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: uio17_info_name
         successes:
@@ -563,7 +575,7 @@ actions:
     - name: Flash_Boot_uio18_info
       prompts: ["# "]
       script:
-      #- command: 
+      #- command:
       - command: cat /sys/class/uio/uio18/name | grep DDRGNBNGPDU ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: uio18_info_name
         successes:
@@ -571,7 +583,7 @@ actions:
         failures:
         - message: "FAIL"
           error: "uio18 info test fail"
-      #- command: 
+      #- command:
       - command: cat /sys/class/uio/uio18/maps/map0/addr | grep 0000000940000000 ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: uio18_info_map_address
         successes:
@@ -579,7 +591,7 @@ actions:
         failures:
         - message: "FAIL"
           error: "uio18 info test fail"
-      #- command: 
+      #- command:
       - command: cat /sys/class/uio/uio18/maps/map0/size | grep 0000000040000000 ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: uio18_info_name
         successes:
@@ -618,7 +630,7 @@ actions:
       # prompts: ["# "]
       # echo: discard
       # script:
-      # #- command: 
+      # #- command:
       # - command: dmesg | grep -i usb | grep "USB .* Storage device detected" ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         # name: Flash_Boot_USB-detection-Linux
         # successes:
@@ -626,17 +638,17 @@ actions:
         # failures:
         # - message: "FAIL"
           # error: "USB detection at linux level test fail"
-      # #- command: 
+      # #- command:
       # - command: cd /root
-      # #- command: 
+      # #- command:
       # - command: rm -rf /root/usb.sfdisk
-      # #- command: 
+      # #- command:
       # - command: "echo 'label: dos' >> usb.sfdisk ; echo 'label-id: 0x02adb289' >> usb.sfdisk ; echo 'device: /dev/sda' >> usb.sfdisk ; echo 'unit: sectors' >> usb.sfdisk; echo ' ' >> usb.sfdisk ; echo '/dev/sda1 : start=2048, size=4194304, type=83' >> usb.sfdisk "
-      # #- command: 
+      # #- command:
       # - command: "cat usb.sfdisk;sync;sleep 5"
-      # #- command: 
+      # #- command:
       # - command: umount /dev/sd*
-      # #- command: 
+      # #- command:
       # #- command: echo "y" | sfdisk /dev/sda < usb.sfdisk && echo "SUCCESS"
       # - command: echo "y" | sfdisk /dev/sda < usb.sfdisk ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         # name: Flash_Boot_USB-partition-table-creation-Linux
@@ -645,7 +657,7 @@ actions:
         # failures:
         # - message: "FAIL"
           # error: "USB partition table creation at linux level test fail"
-      # #- command: 
+      # #- command:
       # #- command: echo "y" | mkfs.ext4 /dev/sda1 && echo "SUCCESS"
       # - command: echo "y" | mkfs.ext4 /dev/sda1 ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         # name: Flash_Boot_USB-format-Linux
@@ -654,9 +666,9 @@ actions:
         # failures:
         # - message: "FAIL"
           # error: "USB format at linux level test fail"
-      # #- command: 
+      # #- command:
       # - command: dmesg
-      # #- command: 
+      # #- command:
 
 - test:
     namespace: linux1
@@ -674,6 +686,84 @@ actions:
         failures:
         - message: "FAIL"
           error: "i2c_detect test fail"
+- test:
+    namespace: linux1
+    timeout:
+      minutes: 15
+      skip: true
+    interactive:
+    - name: iperf
+      prompts: ["iperf Done"]
+      script:
+      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p  /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500;/root/lava_scripts/run_iperf_arguments.expect 192.168.251.12;iperf3 -c 192.168.251.12 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500
+      #- command: udhcpc; set -x;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500;/root/lava_scripts/run_iperf_arguments.expect 192.168.251.12;iperf3 -c 192.168.251.12 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500
+      - command: ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect 192.168.6.220 1500 enp7s0f1;/root/lava_scripts/run_iperf_arguments.expect 192.168.8.226;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect 192.168.6.220 1500 enp7s0f1
+        name: iperf_mtu_1500
+        #successes:
+        #- message: "SUCCESS"
+        #failures:
+        #- message: "FAIL"
+        #  error: "iperf test fail"
+- test:
+    namespace: linux1
+    timeout:
+      minutes: 15
+      skip: true
+    interactive:
+    - name: iperf
+      prompts: ["iperf Done"]
+      script:
+      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  2000;/root/lava_scripts/run_iperf_arguments.expect 192.168.251.12;iperf3 -c 192.168.251.12 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500
+      #- command: udhcpc; set -x; /root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  2000;/root/lava_scripts/run_iperf_arguments.expect 192.168.251.12;iperf3 -c 192.168.251.12 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500
+      - command: ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.6.220  2000 enp7s0f1;/root/lava_scripts/run_iperf_arguments.expect 192.168.8.226;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.6.220  1500 enp7s0f1
+        name: iperf_mtu_2000
+        #successes:
+        #- message: "SUCCESS"
+        #failures:
+        #- message: "FAIL"
+        #  error: "iperf test fail"
+- test:
+    namespace: linux1
+    timeout:
+      minutes: 15
+      skip: true
+    interactive:
+    - name: iperf
+      prompts: ["iperf Done"]
+      script:
+      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip;set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  9000;/root/lava_scripts/run_iperf_arguments.expect 192.168.251.12;iperf3 -c 192.168.251.12 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500
+      #- command: udhcpc; set -x; /root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  9000;/root/lava_scripts/run_iperf_arguments.expect 192.168.251.12;iperf3 -c 192.168.251.12 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500
+      - command:  ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip;set -x; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.6.220  9000 enp7s0f1;/root/lava_scripts/run_iperf_arguments.expect 192.168.8.226;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.6.220  1500 enp7s0f1
+        name: iperf_mtu_9000
+        #successes:
+        #- message: "SUCCESS"
+        #failures:
+        #- message: "FAIL"
+        #  error: "iperf test fail"
+
+
+- test:
+    namespace: linux1
+    timeout:
+      minutes: 5
+      skip: true
+    interactive:
+    - name: SSH
+      prompts: ["PREEMPT_RT"]
+      script:
+      - command:  ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; chmod 777 /root/lava_scripts/ssh_tests.expect; /root/lava_scripts/ssh_tests.expect 192.168.9.160 $ip
+        name: ssh_root_login
+        successes:
+        - message: "running"
+        failures:
+        - message: "No route to host"
+          error: "ssh_root test fail"
+    - name: SSH
+      prompts: ["# "]
+      script:
+      - command:
+        name: ssh_root_login_1
+
 
 
 - test:
@@ -683,10 +773,10 @@ actions:
       skip: true
     interactive:
     - name: perf_LMBench_Performance_Test
-      prompts: ["# "]
+      prompts: ["perf_LMBench_Performance_TEST"]
       script:
       #- command:
-      - command: cd /lmbench-3.0-a9/;cp configs/CONFIG.raptor2 bin/arm-linux/;cd scripts/;export OS=arm-linux;taskset -c 3 ./results
+      - command: set +x;cp ~/.bashrc_default ~/.bashrc;/root/name.sh perf_LMBench_Performance;source ~/.bashrc;cd /lmbench-3.0-a9/;cp configs/CONFIG.raptor2 bin/arm-linux/;cd scripts/;export OS=arm-linux;taskset -c 3 ./results
         name: perf_LMBench
         successes:
         - message: "Calculating memory load latency"
@@ -703,9 +793,9 @@ actions:
       skip: true
     interactive:
     - name: perf_LMBench_Performance_output
-      prompts: ["# "]
+      prompts: ["perf_LMBench_Performance_output_TEST"]
       script:
-      - command: cat /lmbench-3.0-a9/results/arm-linux/raptor2.0 >> results.txt; cat results.txt
+      - command: set +x;cp ~/.bashrc_default ~/.bashrc;/root/name.sh perf_LMBench_Performance_output;source ~/.bashrc;cat /lmbench-3.0-a9/results/arm-linux/raptor2.0 >> results.txt; cat results.txt
         name: perf_LMBench-output
         successes:
         - message: "Random load latency"
@@ -717,13 +807,13 @@ actions:
 - test:
     namespace: linux1
     timeout:
-      minutes: 20
+      minutes: 10
       skip: true
     interactive:
-    - name: perf_Coremark_mthread_Performance_Test 
-      prompts: ["# "]
+    - name: perf_Coremark_mthread_Performance_Test
+      prompts: ["perf_Coremark_mthread_Performance_TEST"]
       script:
-      - command: cd /coremark;./coremark_mthread.exe
+      - command: set +x;cp ~/.bashrc_default ~/.bashrc;/root/name.sh perf_Coremark_mthread_Performance;source ~/.bashrc;cd /coremark;./coremark_mthread.exe
         name: perf_Coremark_mthread-output
         successes:
         - message: "Correct operation validated"
@@ -735,13 +825,13 @@ actions:
 - test:
     namespace: linux1
     timeout:
-      minutes: 20
+      minutes: 10
       skip: true
     interactive:
     - name: perf_Coremark_sthread_Performance_Test
-      prompts: ["# "]
+      prompts: ["perf_Coremark_sthread_Performance_TEST"]
       script:
-      - command: cd /coremark;./coremark_sthread.exe
+      - command: set +x;cp ~/.bashrc_default ~/.bashrc;/root/name.sh perf_Coremark_sthread_Performance;source ~/.bashrc;cd /coremark;./coremark_sthread.exe
         name: perf_Coremark_sthread-output
         successes:
         - message: "Correct operation validated"
@@ -755,6 +845,7 @@ actions:
     # namespace: linux1
     # timeout:
       # minutes: 2
+      # skip: true
     # interactive:
     # - name: perf_Dhrystone_Performance_Test
       # prompts: ["# "]
@@ -767,6 +858,166 @@ actions:
         # - message: "TIMEOUT"
           # exception: InfrastructureError
           # error: "Dhrystone test failed"
+
+
+- test:
+    namespace: linux1
+    timeout:
+      minutes: 15
+      skip: true
+    interactive:
+    - name: parallel_run_tests
+      prompts: ["parallel_run_tests_TEST"]
+      script:
+      - command: set +x;cp ~/.bashrc_default ~/.bashrc;/root/name.sh parallel_run_tests;source ~/.bashrc
+      - command: cd /coremark;./coremark_mthread.exe &
+      - command: cd /lmbench-3.0-a9/;cp configs/CONFIG.raptor2 bin/arm-linux/;cd scripts/;export OS=arm-linux;taskset -c 3 ./results &
+      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  2000;/root/lava_scripts/run_iperf_arguments.expect 192.168.251.12;iperf3 -c 192.168.251.12 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500 ; sleep 600;
+      - command:  ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.6.220  2000 enp7s0f1;/root/lava_scripts/run_iperf_arguments.expect 192.168.8.226;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.6.220  1500 enp7s0f1; sleep 600;
+      - command: pwd;df -h
+        name: parallel_run_tests
+
+
+#- test:
+#    namespace: linux1
+#    timeout:
+#      minutes: 30
+#      skip: true
+#    interactive:
+#    - name: DPDK_RX_10G_64
+#      #prompts: ["Port 0 is closed "]
+#      prompts: ["Bye..."]
+#      echo: discard
+#      script:
+#      #- command: udhcpc;dpdk-hugepages.py -p 32M --setup 512M; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=rxonly" 64;
+#      - command: dpdk-hugepages.py -p 32M --setup 512M; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=rxonly" 64;
+#        name: DPDK_RX_10G_64
+#        successes:
+#        - message: "Shutting down port 0..."
+#        failures:
+#        - message: "TIMEOUT"
+#          #exception: InfrastructureError
+#          error: "dpdk failed"
+#    - name: DPDK_RX_10G_512
+#      prompts: ["Bye..."]
+#      echo: discard
+#      script:
+#      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=rxonly" 512;
+#      - command:  ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=rxonly" 512;
+#        name: DPDK_RX_10G_512
+#        successes:
+#        - message: "Shutting down port 0..."
+#        failures:
+#        - message: "TIMEOUT"
+#          #exception: InfrastructureError
+#          error: "dpdk failed"
+#    - name: DPDK_RX_10G_1500
+#      prompts: ["Bye..."]
+#      echo: discard
+#      script:
+#      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=rxonly" 1500;
+#      - command:  ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=rxonly" 1500;
+#        name: DPDK_RX_10G_1500
+#        successes:
+#        - message: "Shutting down port 0..."
+#        failures:
+#        - message: "TIMEOUT"
+#          #exception: InfrastructureError
+#          error: "dpdk failed"
+#
+#- test:
+#    namespace: linux1
+#    timeout:
+#      minutes: 30
+#      skip: true
+#    interactive:
+#    - name: DPDK_TX_10G_64
+#      #prompts: ["Bye..."]
+#      prompts: ["Bye..."]
+#      echo: discard
+#      script:
+#      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=txonly --tx-ip=192.168.251.131,192.168.251.12" 64;
+#      - command:  ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=txonly --tx-ip=192.168.251.131,192.168.251.12" 64;
+#        name: DPDK_TX_10G_64
+#        successes:
+#        - message: "Shutting down port 0..."
+#        failures:
+#        - message: "TIMEOUT"
+#          #exception: InfrastructureError
+#          error: "dpdk failed"
+#    - name: DPDK_TX_10G_512
+#      prompts: ["Bye..."]
+#      echo: discard
+#      script:
+#      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=txonly --tx-ip=192.168.251.131,192.168.251.12" 512;
+#      - command:  sleep 110;ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=txonly --tx-ip=192.168.251.131,192.168.251.12" 512;
+#        name: DPDK_TX_10G_512
+#        successes:
+#        - message: "Shutting down port 0..."
+#        failures:
+#        - message: "TIMEOUT"
+#          #exception: InfrastructureError
+#          error: "dpdk failed"
+#    - name: DPDK_TX_10G_1500
+#      prompts: ["Bye..."]
+#      echo: discard
+#      script:
+#      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=txonly --tx-ip=192.168.251.131,192.168.251.12" 1500;
+#      - command:  ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=txonly --tx-ip=192.168.251.131,192.168.251.12" 1500;
+#        name: DPDK_TX_10G_1500
+#        successes:
+#        - message: "Shutting down port 0..."
+#        failures:
+#        - message: "TIMEOUT"
+#          #exception: InfrastructureError
+#          error: "dpdk failed"
+#
+#- test:
+#    namespace: linux1
+#    timeout:
+#      minutes: 30
+#      skip: true
+#    interactive:
+#    - name: DPDK_5TSWAP_FORWARDING_10G_64
+#      #prompts: ["Port 0 is closed "]
+#      prompts: ["Bye..."]
+#      echo: discard
+#      script:
+#      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=5tswap" 64;
+#      - command:  ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=5tswap" 64;
+#        name: DPDK_5TSWAP_FORWARDING_10G_64
+#        successes:
+#        - message: "Shutting down port 0..."
+#        failures:
+#        - message: "TIMEOUT"
+#          #exception: InfrastructureError
+#          error: "dpdk failed"
+#    - name: DPDK_5TSWAP_FORWARDING_10G_512
+#      prompts: ["Bye..."]
+#      echo: discard
+#      script:
+#      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=5tswap" 512;
+#      - command:  ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x;  chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=5tswap" 512;
+#        name: DPDK_5TSWAP_FORWARDING_10G_512
+#        successes:
+#        - message: "Shutting down port 0..."
+#        failures:
+#        - message: "TIMEOUT"
+#          #exception: InfrastructureError
+#          error: "dpdk failed"
+#    - name: DPDK_5TSWAP_FORWARDING_10G_1500
+#      prompts: ["Bye..."]
+#      echo: discard
+#      script:
+#      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=5tswap" 1500;
+#      - command:  ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; chmod 777 -R /root/lava_scripts;cd /root/lava_scripts/dpdk;./dpdk_run.sh  "dpdk-testpmd -l 4-5 -n 4 -d /lib/librte_mempool_ring.so -d /lib/librte_net_raptor2.so --vdev=XGMAC0 -- -i --forward-mode=5tswap" 1500;
+#        name: DPDK_5TSWAP_FORWARDING_10G_1500
+#        successes:
+#        - message: "Shutting down port 0..."
+#        failures:
+#        - message: "TIMEOUT"
+#          #exception: InfrastructureError
+#          error: "dpdk failed"
 
 
 
@@ -797,7 +1048,7 @@ actions:
       prompts: ["=>"]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - command: version
         name: U-Boot_version
       #- command:
@@ -830,8 +1081,8 @@ actions:
       #- command:
       #- command:
       - command: tftp 0x802000000 TFTP_PKG_DIR_PATH/FLASHER/flash_image_16M.bin
-      #- command: tftp 0x802000000 TFTP_PKG_DIR_PATH/flash_image_16M.bin
-      #- command: tftp 0x402000000 TFTP_PKG_DIR_PATH/FLASHER/flash_image_16M.bin
+      #- command: tftp 0x802000000 koti/RAPTOR2-GNB-PLFM-B0-raptor2_dev_B0_170823_57/PRODUCT-REL-TITAN-GNB-PLFM-B0-raptor2_dev_B0_170823_57/flash_image_16M.bin
+      #- command: tftp 0x402000000 koti/RAPTOR2-GNB-PLFM-B0-raptor2_dev_B0_170823_57/PRODUCT-REL-TITAN-GNB-PLFM-B0-raptor2_dev_B0_170823_57/FLASHER/flash_image_16M.bin
         name: TFTP_Flasher_Image
         successes:
         - message: "done"
@@ -859,6 +1110,43 @@ actions:
 #############################
 # eMMC boot login after flash
 #############################
+
+# - boot:
+    # namespace: linux1
+    # method: minimal
+    # auto_login:
+      # login_prompt: 'login:'
+      # username: rootrootroot
+    # timeout:
+     # minutes: 20
+    # prompts:
+    # - 'Password:'
+    # timeout:
+      # minutes: 20
+
+
+# - test:
+    # namespace: linux1
+    # timeout:
+      # minutes: 10
+    # interactive:
+    # - name: basic_linux_commands_emmcboot
+      # prompts: ["login:"]
+      # script:
+      # - command: root
+# #        name: basic_linux_commands
+
+
+# - test:
+    # namespace: linux1
+    # timeout:
+      # minutes: 10
+    # interactive:
+    # - name: basic_linux_commands_emmcboot
+      # prompts: ["# "]
+      # script:
+      # - command: root
+# #        name: basic_linux_commands
 
 - boot:
     namespace: linux1
@@ -975,7 +1263,17 @@ actions:
       minutes: 20
 
 
-
+#- test:
+#    namespace: linux1
+#    timeout:
+#      minutes: 10
+#    interactive:
+#    - name: basic_linux_commands_emmcboot
+#      prompts: ["Login incorrect"]
+#      echo: discard
+#      script:
+#      - command: root
+##        name: basic_linux_commands
 
 - test:
     namespace: linux1
@@ -990,6 +1288,29 @@ actions:
 #        name: basic_linux_commands
 
 
+#- test:
+#    namespace: linux1
+#    timeout:
+#      minutes: 4
+#    interactive:
+#    - name: basic_linux_commands
+#      prompts: ["raptor2 login:","#"]
+#      echo: discard
+#      script:
+#      - command:  root
+##        name: lstest
+##      - command:
+
+#- test:
+#    namespace: linux1
+#    timeout:
+#      minutes: 4
+#    interactive:
+#    - name: basic_linux_commands
+#      prompts: ["raptor2 login:","#"]
+#      echo: discard
+#      script:
+#      - command:  root
 
 - test:
     namespace: linux1
@@ -1061,7 +1382,6 @@ actions:
 #          exception: InfrastructureError
           error: "ls failed"
 
-
 - test:
     namespace: linux1
     timeout:
@@ -1087,7 +1407,7 @@ actions:
       prompts: ["# "]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - command: ifconfig -a ; ifconfig eth0
         name: MAC_check_linux_level
         successes:
@@ -1100,7 +1420,7 @@ actions:
       prompts: ["# "]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - command: ls / | grep "logdump"
         name: logdump_folder_check
         successes:
@@ -1113,7 +1433,7 @@ actions:
       prompts: ["# "]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - command: ifconfig -a ; ifconfig eth0
         name: MAC_check_linux_level
         successes:
@@ -1126,11 +1446,11 @@ actions:
       prompts: ["# "]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - command: echo "SUCCESS" >> /root/success.txt; echo "FAIL" >> /root/fail.txt
-      #- command: 
-      #- command: 
-      - command: udhcpc ;ping TFTP_SERVER_IP_ADDRESS -c 10 >> /tmp/ping_test.txt ; cat /tmp/ping_test.txt | grep "10 packets transmitted, 10 packets received, 0% packet loss" ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
+      #- command:
+      #- command:
+      - command: ping 192.168.9.160 -c 10 >> /tmp/ping_test.txt ; cat /tmp/ping_test.txt | grep "10 packets transmitted, 10 received, 0% packet loss" ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: Flash_Boot_eth_ping_test
         successes:
         - message: "SUCCESS"
@@ -1140,9 +1460,9 @@ actions:
     - name: Flash_Boot_dmesg_errors
       prompts: ["# "]
       script:
-      #- command: 
+      #- command:
       #- command: echo "SUCCESS" >> /root/success.txt; echo "FAIL" >> /root/fail.txt
-      - command: dmesg | grep error | grep -v ARCH_SOC_ID | grep -v -e  "error -110 whilst initialising MMC card" -e "virt-edgeq 3c980000.edgeq_virt_uio.* Failed to find dma-channels"; if  [ $? == 0 ] ; then cat /root/fail.txt;else cat /root/success.txt; fi
+      - command: dmesg | grep error | grep -v ARCH_SOC_ID | grep -v -e  "error -110 whilst initialising MMC card" -e "virt-edgeq 3c980000.edgeq_virt_uio.* Failed to find dma-channels" ;if  [ $? == 0 ] ; then cat /root/fail.txt;else cat /root/success.txt; fi
         name: dmesg_errors
         successes:
         - message: "SUCCESS"
@@ -1153,8 +1473,8 @@ actions:
       prompts: ["# "]
       script:
       #- command: echo "SUCCESS" >> /root/success.txt; echo "FAIL" >> /root/fail.txt
-      #- command: 
-      - command: dmesg | grep -i fail | grep -v kernel.sched | grep -v -e  "error -110 whilst initialising MMC card" -e "virt-edgeq 3c980000.edgeq_virt_uio.* Failed to find dma-channels"; if  [ $? == 0 ] ; then cat /root/fail.txt;else cat /root/success.txt; fi
+      #- command:
+      - command: dmesg | grep -i fail | grep -v kernel.sched | grep -v -e "Parsing zephyr-mem" -e "virt-edgeq 3c980000.edgeq_virt_uio.* Failed to find dma-channels"; if  [ $? == 0 ] ; then cat /root/fail.txt;else cat /root/success.txt; fi
         name: dmesg_fail
         successes:
         - message: "SUCCESS"
@@ -1177,7 +1497,7 @@ actions:
       prompts: ["# "]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - command: echo 1024 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages; dpdk-helloworld -l 0-3 -n 4 | grep -c 'hello from core 1\|hello from core 2\|hello from core 3\|hello from core 0' | grep '[4]'; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: dpdk_helloworld_linux
         successes:
@@ -1189,7 +1509,7 @@ actions:
       prompts: ["# "]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - command: cat /sys/class/uio/uio17/name | grep DDRGNBNGPCU ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: uio17_info_name
         successes:
@@ -1197,7 +1517,7 @@ actions:
         failures:
         - message: "FAIL"
           error: "uio17 info test fail"
-      #- command: 
+      #- command:
       - command: cat /sys/class/uio/uio17/maps/map0/addr | grep 0000000900000000 ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: uio17_info_map_address
         successes:
@@ -1205,7 +1525,7 @@ actions:
         failures:
         - message: "FAIL"
           error: "uio17 info test fail"
-      #- command: 
+      #- command:
       - command: cat /sys/class/uio/uio17/maps/map0/size | grep 0000000040000000 ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: uio17_info_name
         successes:
@@ -1216,7 +1536,7 @@ actions:
     - name: Flash_Boot_uio18_info
       prompts: ["# "]
       script:
-      #- command: 
+      #- command:
       - command: cat /sys/class/uio/uio18/name | grep DDRGNBNGPDU ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: uio18_info_name
         successes:
@@ -1224,7 +1544,7 @@ actions:
         failures:
         - message: "FAIL"
           error: "uio18 info test fail"
-      #- command: 
+      #- command:
       - command: cat /sys/class/uio/uio18/maps/map0/addr | grep 0000000940000000 ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: uio18_info_map_address
         successes:
@@ -1232,7 +1552,7 @@ actions:
         failures:
         - message: "FAIL"
           error: "uio18 info test fail"
-      #- command: 
+      #- command:
       - command: cat /sys/class/uio/uio18/maps/map0/size | grep 0000000040000000 ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: uio18_info_name
         successes:
@@ -1271,7 +1591,7 @@ actions:
       prompts: ["# "]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - command: dmesg | grep -i usb | grep "USB .* Storage device detected" ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: Flash_Boot_USB-detection-Linux
         successes:
@@ -1279,17 +1599,17 @@ actions:
         failures:
         - message: "FAIL"
           error: "USB detection at linux level test fail"
-      #- command: 
+      #- command:
       - command: cd /root
-      #- command: 
+      #- command:
       - command: rm -rf /root/usb.sfdisk
-      #- command: 
+      #- command:
       - command: "echo 'label: dos' >> usb.sfdisk ; echo 'label-id: 0x02adb289' >> usb.sfdisk ; echo 'device: /dev/sda' >> usb.sfdisk ; echo 'unit: sectors' >> usb.sfdisk; echo ' ' >> usb.sfdisk ; echo '/dev/sda1 : start=2048, size=4194304, type=83' >> usb.sfdisk "
-      #- command: 
+      #- command:
       - command: "cat usb.sfdisk;sync;sleep 5"
-      #- command: 
+      #- command:
       - command: umount /dev/sd*
-      #- command: 
+      #- command:
       #- command: echo "y" | sfdisk /dev/sda < usb.sfdisk && echo "SUCCESS"
       - command: echo "y" | sfdisk /dev/sda < usb.sfdisk ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: Flash_Boot_USB-partition-table-creation-Linux
@@ -1298,7 +1618,7 @@ actions:
         failures:
         - message: "FAIL"
           error: "USB partition table creation at linux level test fail"
-      #- command: 
+      #- command:
       #- command: echo "y" | mkfs.ext4 /dev/sda1 && echo "SUCCESS"
       - command: echo "y" | mkfs.ext4 /dev/sda1 ; if  [ $? == 0 ] ; then cat /root/success.txt;else cat /root/fail.txt; fi
         name: Flash_Boot_USB-format-Linux
@@ -1307,9 +1627,9 @@ actions:
         failures:
         - message: "FAIL"
           error: "USB format at linux level test fail"
-      #- command: 
+      #- command:
       - command: dmesg
-      #- command: 
+      #- command:
 
 
 
@@ -1320,7 +1640,7 @@ actions:
 ###DDR Base boot tests
 #################
 ##########################
-####Edgeq-raptor2 linux, Zephyr and linux+Zephyr boot test -RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v11-BN_175
+####Edgeq-raptor2 linux, Zephyr and linux+Zephyr boot test -RAPTOR2-GNB-PLFM-B0-raptor2_dev_B0_170823_57
 #########################
 
 
@@ -1331,7 +1651,7 @@ actions:
     # to: flasher
     # images:
       # image:
-        # url: file:/lab-nfs/koti/latestimages/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v11-BN_175/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0/IMAGES/FIRMWARE/EVB-V2/firmware.bin
+        # url: file:/lava/edgeq/latestimages/RAPTOR2-GNB-PLFM-B0-raptor2_dev_B0_170823_57/PRODUCT-REL-TITAN-GNB-PLFM-B0-raptor2_dev_B0_170823_57/IMAGES/FIRMWARE/EVB-V2/firmware.bin
 
 - boot:
     namespace: linux1
@@ -1355,29 +1675,29 @@ actions:
       #- command:
       - command: version;pri ethaddr
         name: U-Boot_version
-      #- command: 
+      #- command:
       - command: version;pri ethaddr
         name: FirmwareFlash
         successes:
-        - message: "Boot"
+        - message: "v1.4.0-RC1.1"
         failures:
         - message: "TIMEOUT"
 #          exception: InfrastructureError
           error: "Firmware Flash failed"
-      #- command: 
-#      - command: print ethaddr
-#        name: Board_MAC_Address
-#        successes:
-#        - message: "MAC_ADDRESS"
-#        failures:
-#        - message: "TIMEOUT"
+      #- command:
+      - command: print ethaddr
+        name: Board_MAC_Address
+        successes:
+        - message: "MAC_LOWER_ADDRESS"
+        failures:
+        - message: "TIMEOUT"
 #          exception: InfrastructureError
-#          error: "Firmware Flash failed"
+          error: "Firmware Flash failed"
 
 
 
 #######################
-##Edgeq-raptor2 U-Boot eMMC scenarios
+##Edgeq-raptor2 U-Boot eMMC scenarios -RAPTOR2-GNB-PLFM-B0-raptor2_dev_B0_170823_57
 #######################
 #timeouts:
 #  job:
@@ -1413,7 +1733,7 @@ actions:
       prompts: ["TestComplete"]
       echo: discard
       script:
-      #- command: 
+      #- command:
       - name: U-Boot-ethaddr
         command: pri ethaddr;print complete
       #- name: wait-for-the-prompt
@@ -1441,14 +1761,14 @@ actions:
       #  failures:
       #  - message: "TIMEOUT"
       #    error: "U-boot eMMC mtest command failed"
-      - name: u-boot-eMMC-tests-mtest        
+      - name: u-boot-eMMC-tests-mtest
         command: mtest 0x810000000 0x8e0000000 0xa5a5dead 1;print complete
         successes:
         - message: "with 0 errors"
         failures:
         - message: "TIMEOUT"
           error: "U-boot eMMC mtest command failed"
-        #command: 
+        #command:
 
 - test:
     namespace: linux1
@@ -1481,7 +1801,7 @@ actions:
       echo: discard
       script:
       - name: U-Boot_eMMC_3_5GB_dataread_on_4GB_offset
-        #command: 
+        #command:
         command: mmc read 0x900000000 0 700000;print complete
         successes:
         - message: "blocks read: OK"
@@ -1516,7 +1836,7 @@ actions:
 
 
 
-####Flash the firmware 
+####Flash the firmware
 ################
 ####Flash firmware from U-Boot
 #################
@@ -1567,8 +1887,8 @@ actions:
       - command: setenv ipaddr 192.168.6.214; dhcp
       - command: setenv firmware_addr_f 0
       - command: tftp 0x802000000 TFTP_PKG_DIR_PATH/FLASHER/flash_image_16M.bin
-      #- command: tftp 0x802000000 TFTP_PKG_DIR_PATH/flash_image_16M.bin
-      #- command: tftp 0x402000000 TFTP_PKG_DIR_PATH/FLASHER/flash_image_16M.bin
+      #- command: tftp 0x802000000 koti/RAPTOR2-GNB-PLFM-B0-raptor2_dev_B0_170823_57/PRODUCT-REL-TITAN-GNB-PLFM-B0-raptor2_dev_B0_170823_57/flash_image_16M.bin
+      #- command: tftp 0x402000000 koti/RAPTOR2-GNB-PLFM-B0-raptor2_dev_B0_170823_57/PRODUCT-REL-TITAN-GNB-PLFM-B0-raptor2_dev_B0_170823_57/FLASHER/flash_image_16M.bin
         name: TFTP_Flasher_Image
         successes:
         - message: "done"
@@ -1604,6 +1924,7 @@ actions:
     - 'Password:'
     timeout:
       minutes: 20
+
 
 - test:
     namespace: linux1
@@ -1666,7 +1987,7 @@ actions:
       - command: sleep 5;export PACKAGE_VARIANT_NAME="GNB"
       - command: sleep 5;export FIRMWARE_EVB_VER="V2"
       - command: sleep 5;export ETHERNET_PORT="eth0"
-      - command: sleep 5;export FW_FLASH_REQ="y"
+      - command: sleep 5; export FW_FLASH_REQ="y"
       - command: sleep 5;cd /opt/flasher/
       - command: sed -i "s|tftp -g -r|set -x;time tftp -g -r|g"  /opt/flasher/emmc_flasher.sh
 
@@ -1695,68 +2016,16 @@ actions:
 - boot:
     namespace: linux1
     method: minimal
-    reset: false
     auto_login:
       login_prompt: 'login:'
       username: root
+#      password_prompt: "Password:"
+#      password: "root"
     timeout:
      minutes: 20
     prompts:
     - 'Password:'
-    timeout:
-      minutes: 20
-
-
-
-
-- test:
-    namespace: linux1
-    timeout:
-      minutes: 10
-    interactive:
-    - name: basic_linux_commands_emmcboot
-      prompts: ["Password:","raptor2 login:","#"]
-      echo: discard
-      script:
-      - command: root
-#        name: basic_linux_commands
-
-
-
-- test:
-    namespace: linux1
-    timeout:
-      minutes: 4
-    interactive:
-    - name: basic_linux_commands
-      prompts: ["# "]
-      echo: discard
-      script:
-      #- command:
-      - command: ls -ltr;pwd; df -h; ls -l /dev | grep -i mmc;reboot
-#        name: lstest
-        successes:
-        - message: "total"
-        failures:
-        - message: "TIMEOUT"
-#          exception: InfrastructureError
-          error: "ls failed"
-
-
-##
-#linux boot
-##
-- boot:
-    namespace: linux1
-    method: minimal
-    reset: false
-    auto_login:
-      login_prompt: 'login:'
-      username: root
-    timeout:
-     minutes: 20
-    prompts:
-    - 'Password:'
+#    - '#'
     timeout:
       minutes: 20
 
@@ -1792,3 +2061,5 @@ actions:
         - message: "TIMEOUT"
 #          exception: InfrastructureError
           error: "ls failed"
+
+
