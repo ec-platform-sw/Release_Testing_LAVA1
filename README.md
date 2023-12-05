@@ -17,11 +17,8 @@ Test Execution using LAVA:
 4. Run the script ./test_run_file_generate.sh by provide the requireed  arguments and it will provide required test_run file/files.
    Example:
    "BOARD_TAG="Board122"  DEVICE_TYPE="b0-edgeq-raptor2" BUILD_ID="RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176" BSP_ID="PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0" JOB_NAME="SANITY-REPORT_xxxxx" FIRMWARE_BIN_PATH="/lab-nfs/koti/latestimages/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0/FLASHER/flash_image_16M.bin" TFTP_SERVER_IP_ADDRESS="192.168.9.160" TFTP_PKG_DIR_PATH="koti/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0" MAC_ADDRESS="FC:9B:D4:00:02:3A"   PRODUCT_REL_PATH="/lab-nfs/koti/latestimages/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0" WEBPDU_IP="192.168.3.127" WEBPDU_PORT="6" "
-6. Make sure Target's Host PC have /lava mounted path. if not, Please mount the same using below commands
-   a. #sudo mkdir -p /lava
-   b. #sudo chmod 777 -R /lava
-   c. #sudo mount 192.168.5.221:/mnt/blr/regression  /lava
-7. Run the LAVA test using
+6. Make sure Target's Host PC have /lava mounted path. if not, Please mount the same using below commands (  #sudo mkdir -p /lava;  sudo chmod 777 -R /lava ; sudo mount 192.168.5.221:/mnt/blr/regression  /lava)
+8. Run the LAVA test using
     1. Loging to 192.168.3.198 (ssh equser@192.168.3.198)
     2. cd ~/lava/release_testing
     3. chmod 777 test_setup_update.sh
