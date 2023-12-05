@@ -23,16 +23,16 @@ Test Execution using LAVA:
     2. sudo chmod 777 -R /lava
     3. sudo mount 192.168.5.221:/mnt/blr/regression  /lava
 7. Make sure Target's Tools folder is extracted in BSP's Product path. if not, Please extract the same using below steps
-    1. cd <BSP_PATH>/<PRODUCT PATH> (Ex: # cd /lab-nfs/koti/latestimages/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0)
+    1. cd <BSP_PATH>/<PRODUCT_PATH> (Ex: # cd /lab-nfs/koti/latestimages/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0)
     2. cd TOOLS
     3. tar -xzvf <Board.tar.gz> ( Ex: #tar -xzvf TITAN.tar.gz or #tar -xzvf HAWK.tar.gz etc...)
-    4. cd <BSP_PATH>/<PRODUCT PATH>
-    5. cp <BSP_PATH>/<PRODUCT PATH>/flash_image_16M.bin
+    4. cd <BSP_PATH>/<PRODUCT_PATH>
+    5. cp <BSP_PATH>/<PRODUCT_PATH>/flash_image_16M.bin
 8. Setup on TFTP server
     1. Login to tftp server
-    2. cd <BSP_PATH>/<PRODUCT PATH> (Ex: # cd /srv/tftp/koti/latestimages/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0)
-    3. cp <BSP_PATH>/<PRODUCT PATH>/FLASHER/flash_image_16M.bin 16M.bin
-    4. cp <BSP_PATH>/<PRODUCT PATH>/FLASHER/flash_image_32M.bin 32M.bin
+    2. cd <BSP_PATH>/<PRODUCT_PATH> (Ex: # cd /srv/tftp/koti/latestimages/RAPTOR2-GNB-PLFM-B0-v1.3.0-RC8.0-v12-BN_176/PRODUCT-REL-TITAN-GNB-PLFM-B0-v1.3.0-RC8.0)
+    3. cp <BSP_PATH>/<PRODUCT_PATH>/FLASHER/flash_image_16M.bin 16M.bin
+    4. cp <BSP_PATH>/<PRODUCT_PATH>/FLASHER/flash_image_32M.bin 32M.bin
 9. Run the LAVA test using
     1. Loging to 192.168.3.198 (ssh equser@192.168.3.198)
     2. cd ~/lava/release_testing
