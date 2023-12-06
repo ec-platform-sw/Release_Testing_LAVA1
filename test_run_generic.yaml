@@ -680,61 +680,6 @@ actions:
         failures:
         - message: "FAIL"
           error: "i2c_detect test fail"
-- test:
-    namespace: linux1
-    timeout:
-      minutes: 15
-      skip: true
-    interactive:
-    - name: iperf
-      prompts: ["iperf Done"]
-      script:
-      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p  /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500;/root/lava_scripts/run_iperf_arguments.expect 192.168.251.12;iperf3 -c 192.168.251.12 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500
-      #- command: udhcpc; set -x;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500;/root/lava_scripts/run_iperf_arguments.expect 192.168.251.12;iperf3 -c 192.168.251.12 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500
-      - command: ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect 192.168.6.220 1500 enp7s0f1;/root/lava_scripts/run_iperf_arguments.expect 192.168.8.226;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect 192.168.6.220 1500 enp7s0f1
-        name: iperf_mtu_1500
-        #successes:
-        #- message: "SUCCESS"
-        #failures:
-        #- message: "FAIL"
-        #  error: "iperf test fail"
-- test:
-    namespace: linux1
-    timeout:
-      minutes: 15
-      skip: true
-    interactive:
-    - name: iperf
-      prompts: ["iperf Done"]
-      script:
-      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  2000;/root/lava_scripts/run_iperf_arguments.expect 192.168.251.12;iperf3 -c 192.168.251.12 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500
-      #- command: udhcpc; set -x; /root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  2000;/root/lava_scripts/run_iperf_arguments.expect 192.168.251.12;iperf3 -c 192.168.251.12 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500
-      - command: ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.6.220  2000 enp7s0f1;/root/lava_scripts/run_iperf_arguments.expect 192.168.8.226;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.6.220  1500 enp7s0f1
-        name: iperf_mtu_2000
-        #successes:
-        #- message: "SUCCESS"
-        #failures:
-        #- message: "FAIL"
-        #  error: "iperf test fail"
-- test:
-    namespace: linux1
-    timeout:
-      minutes: 15
-      skip: true
-    interactive:
-    - name: iperf
-      prompts: ["iperf Done"]
-      script:
-      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip;set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  9000;/root/lava_scripts/run_iperf_arguments.expect 192.168.251.12;iperf3 -c 192.168.251.12 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500
-      #- command: udhcpc; set -x; /root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  9000;/root/lava_scripts/run_iperf_arguments.expect 192.168.251.12;iperf3 -c 192.168.251.12 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500
-      - command:  ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip;set -x; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.6.220  9000 enp7s0f1;/root/lava_scripts/run_iperf_arguments.expect 192.168.8.226;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.6.220  1500 enp7s0f1
-        name: iperf_mtu_9000
-        #successes:
-        #- message: "SUCCESS"
-        #failures:
-        #- message: "FAIL"
-        #  error: "iperf test fail"
-
 
 - test:
     namespace: linux1
@@ -1074,7 +1019,7 @@ actions:
       #- command:
       #- command:
       #- command:
-      - command: tftp 0x802000000 TFTP_PKG_DIR_PATH/FLASHER/flash_image_16M.bin
+      - command: tftp 0x802000000 TFTP_PKG_DIR_PATH/16M.bin
       #- command: tftp 0x802000000 koti/RAPTOR2-GNB-PLFM-B0-raptor2_dev_B0_170823_57/PRODUCT-REL-TITAN-GNB-PLFM-B0-raptor2_dev_B0_170823_57/flash_image_16M.bin
       #- command: tftp 0x402000000 koti/RAPTOR2-GNB-PLFM-B0-raptor2_dev_B0_170823_57/PRODUCT-REL-TITAN-GNB-PLFM-B0-raptor2_dev_B0_170823_57/FLASHER/flash_image_16M.bin
         name: TFTP_Flasher_Image
@@ -1673,7 +1618,7 @@ actions:
       - command: version;pri ethaddr
         name: FirmwareFlash
         successes:
-        - message: "v1.4.0-RC1.1"
+        - message: "Boot"
         failures:
         - message: "TIMEOUT"
 #          exception: InfrastructureError
@@ -1880,7 +1825,7 @@ actions:
       - command: setenv serverip TFTP_SERVER_IP_ADDRESS
       - command: setenv ipaddr 192.168.6.214; dhcp
       - command: setenv firmware_addr_f 0
-      - command: tftp 0x802000000 TFTP_PKG_DIR_PATH/FLASHER/flash_image_16M.bin
+      - command: tftp 0x802000000 TFTP_PKG_DIR_PATH/16M.bin
       #- command: tftp 0x802000000 koti/RAPTOR2-GNB-PLFM-B0-raptor2_dev_B0_170823_57/PRODUCT-REL-TITAN-GNB-PLFM-B0-raptor2_dev_B0_170823_57/flash_image_16M.bin
       #- command: tftp 0x402000000 koti/RAPTOR2-GNB-PLFM-B0-raptor2_dev_B0_170823_57/PRODUCT-REL-TITAN-GNB-PLFM-B0-raptor2_dev_B0_170823_57/FLASHER/flash_image_16M.bin
         name: TFTP_Flasher_Image
