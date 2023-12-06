@@ -799,22 +799,6 @@ actions:
           # error: "Dhrystone test failed"
 
 
-- test:
-    namespace: linux1
-    timeout:
-      minutes: 15
-      skip: true
-    interactive:
-    - name: parallel_run_tests
-      prompts: ["parallel_run_tests_TEST"]
-      script:
-      - command: set +x;cp ~/.bashrc_default ~/.bashrc;/root/name.sh parallel_run_tests;source ~/.bashrc
-      - command: cd /coremark;./coremark_mthread.exe &
-      - command: cd /lmbench-3.0-a9/;cp configs/CONFIG.raptor2 bin/arm-linux/;cd scripts/;export OS=arm-linux;taskset -c 3 ./results &
-      #- command: udhcpc; ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; mkdir -p /tmp/nfs; mount 192.168.3.230:/lab-nfs /tmp/nfs; cp -r /tmp/nfs/koti/lava_scripts/ /root ; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  2000;/root/lava_scripts/run_iperf_arguments.expect 192.168.251.12;iperf3 -c 192.168.251.12 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.251.12;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.251.12  1500 ; sleep 600;
-      - command:  ip="$(ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1)"; echo ip=$ip; set -x; chmod 777 -R /root/lava_scripts;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.6.220  2000 enp7s0f1;/root/lava_scripts/run_iperf_arguments.expect 192.168.8.226;iperf3 -c 192.168.6.220 ;/root/lava_scripts/kill_iperf_arguments.expect 192.168.8.226;/root/lava_scripts/iperf_mtu_setup_server_arguments.expect  192.168.6.220  1500 enp7s0f1; sleep 600;
-      - command: pwd;df -h
-        name: parallel_run_tests
 
 
 #- test:
